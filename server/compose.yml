@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: "postgres-auth-dev"
+    container_name: "postgres-ticoon-local-db"
     image: "postgres"
     env_file:
       - .env
