@@ -1,6 +1,6 @@
 import express from "express";
-import { makeSignInController } from "../factories/makeSignInController";
-import { makeSignUpController } from "../factories/makeSignUpController";
+import { makeSignInController } from "../factories/auth/controller/makeSignInController";
+import { makeSignUpController } from "../factories/auth/controller/makeSignUpController";
 import { routeAdapter } from "./adapters/routeAdapter";
 
 const app = express();
