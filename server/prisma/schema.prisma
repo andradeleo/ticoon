@@ -30,7 +30,7 @@ model Organization {
   name       String
   created_at DateTime @default(now())
 
-  quiz_id    String  @db.Uuid()
+  quiz_id    String? @db.Uuid()
   Quiz       Quiz[]
   account_id String  @db.Uuid()
   Account    Account @relation(fields: [account_id], references: [id])
