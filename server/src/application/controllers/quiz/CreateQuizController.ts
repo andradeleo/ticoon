@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IController, IResponse } from "../../interfaces/IController";
 import { IRequest } from "../../interfaces/IRequest";
+import { CreateQuizUseCase } from "../../useCases/CreateQuizUseCase";
 
 const answerSchema = z.object({
   option: z.string().min(2),
@@ -23,6 +24,8 @@ const schema = z.object({
 
 
 export class CreateQuizController implements IController {
+  constructor(private readonly createUseCase: CreateQuizUseCase) {}
+
   async handle({ body }: IRequest): Promise<IResponse> {
     const result = schema.safeParse(body);
 

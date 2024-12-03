@@ -5,7 +5,7 @@ import { routeAdapter } from "./adapters/routeAdapter";
 import { middlewareAdapter } from "./adapters/middlewareAdapter";
 import { makeAuthenticationMiddleware } from "../factories/auth/middleware/makeAuthenticationMiddleware";
 import { makeAuthorizationMiddleware } from "../factories/auth/middleware/makeAuthorizationMiddleware";
-import { CreateQuizController } from "../application/controllers/quiz/CreateQuizController";
+import { makeCreateQuizController } from "../factories/quiz/controller/makeCreateQuizController";
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.post("/sign-in", routeAdapter(makeSignInController()));
 app.post(("/quiz"), 
           middlewareAdapter(makeAuthenticationMiddleware()), 
           middlewareAdapter(makeAuthorizationMiddleware(["ADMIN", "USER"])),
-          routeAdapter(new CreateQuizController())
+          routeAdapter(makeCreateQuizController())
         );
 
 app.listen(3001, () => {
