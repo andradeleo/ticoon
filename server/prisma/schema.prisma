@@ -15,11 +15,60 @@ enum Role {
 }
 
 model Account {
-  id       String @id @default(uuid()) @db.Uuid()
-  name     String
-  email    String @unique
-  password String
-  role     Role
+  id           String         @id @default(uuid()) @db.Uuid()
+  name         String
+  email        String         @unique
+  password     String
+  role         Role
+  Organization Organization[]
 
   @@map("accounts")
+}
+
+model Organization {
+  id         String   @id @default(uuid()) @db.Uuid()
+  name       String
+  created_at DateTime @default(now())
+
+  quiz_id    String  @db.Uuid()
+  Quiz       Quiz[]
+  account_id String  @db.Uuid()
+  Account    Account @relation(fields: [account_id], references: [id])
+
+  @@map("organizations")
+}
+
+model Quiz {
+  id          String     @id @default(uuid()) @db.Uuid()
+  title       String
+  description String?
+  experience  Int?
+  created_at  DateTime   @default(now())
+  questions   Question[]
+
+  organization_id String       @db.Uuid()
+  Organization    Organization @relation(fields: [organization_id], references: [id])
+
+  @@map("quizzes")
+}
+
+model Question {
+  id         String   @id @default(uuid()) @db.Uuid()
+  name       String
+  Answer     Answer[]
+  experience Int?
+  quiz_id    String?  @db.Uuid()
+  Quiz       Quiz?    @relation(fields: [quiz_id], references: [id])
+
+  @@map("questions")
+}
+
+model Answer {
+  id         String    @id @default(uuid()) @db.Uuid()
+  option     String
+  isCorrect  Boolean
+  Question   Question? @relation(fields: [questionId], references: [id])
+  questionId String?   @db.Uuid()
+
+  @@map("answers")
 }
