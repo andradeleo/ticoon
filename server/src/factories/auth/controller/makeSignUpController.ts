@@ -1,5 +1,5 @@
 import { SignUpController } from "../../../application/controllers/SignUpController";
-import { makeSignUpUseCase } from "../useCase/makeSignUpUseCase";
+import { makeSignUpUseCase } from "../useCases/makeSignUpUseCase";
 
 export function makeSignUpController() {
   const signUpUseCase = makeSignUpUseCase();
