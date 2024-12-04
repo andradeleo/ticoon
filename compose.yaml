@@ -1,0 +1,7 @@
+services:
+  database:
+    container_name: "pg-ticoon-local"
+    image: postgres
+    env_file: .env.development
+    ports:
+      - "5432:5432"
