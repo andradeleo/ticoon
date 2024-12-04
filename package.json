@@ -4,7 +4,10 @@
   "description": "Plataforma educacional que aplica na prática o conceito de gamificação.",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "biome:check": "npx @biomejs/biome check --write",
+    "biome:format": "npx @biomejs/biome format --write",
+    "biome:lint": "npx @biomejs/biome lint --write"
   },
   "keywords": [],
   "author": "",
