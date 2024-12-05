@@ -35,8 +35,21 @@ model Quiz {
   experience  Int?
   created_at  DateTime   @default(now())
 
+  question Question[]
+
   User    User   @relation(fields: [user_id], references: [id])
   user_id String @db.Uuid()
 
   @@map("quizzes")
+}
+
+model Question {
+  id          String @id @default(uuid()) @db.Uuid()
+  description String
+  experience  Int?
+
+  Quiz    Quiz   @relation(fields: [quiz_id], references: [id])
+  quiz_id String @db.Uuid()
+
+  @@map("questions")
 }
