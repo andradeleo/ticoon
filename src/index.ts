@@ -4,6 +4,7 @@ import { hash } from "bcryptjs";
 import { prismaClient } from "./application/libs/prisma";
 import "express-async-errors";
 import { errorHandler } from "./application/middlewares/errorHandler";
+import { UserAlreadyExists } from "./application/errors/UserAlreadyExists";
 
 const app = express();
 
@@ -25,7 +26,7 @@ app.post("/sign-up", async (req, res) => {
   });
 
   if (userAlreadyExists) {
-    throw new Error("email already exists");
+    throw new UserAlreadyExists();
   }
 
   const hashedPassword = await hash(password, 10);
