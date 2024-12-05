@@ -4,6 +4,7 @@ import { prismaClient } from "../libs/prisma";
 import { z } from "zod";
 import type { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
+import { InvalidCredentials } from "../errors/InvalidCredentials";
 
 const schema = z.object({
   name: z.string().min(3),
@@ -53,13 +54,13 @@ class AuthenticationController {
     });
 
     if (!user) {
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentials();
     }
 
     const isPasswordValid = await compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentials();
     }
 
     const accessToken = sign(
