@@ -8,5 +8,6 @@ router.post("/sign-up", AuthenticationController.signUp);
 router.post("/sign-in", AuthenticationController.signIn);
 
 router.post("/quiz", QuizController.create);
+router.get("/quiz", QuizController.findAll);
 
 export default router;

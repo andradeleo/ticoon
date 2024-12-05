@@ -53,6 +53,11 @@ class QuizController {
 
     res.status(201).json({ data: quiz });
   }
+
+  async findAll(_: Request, res: Response): Promise<void> {
+    const allQuizzes = await prismaClient.quiz.findMany();
+    res.status(200).json({ data: allQuizzes });
+  }
 }
 
 export default new QuizController();
