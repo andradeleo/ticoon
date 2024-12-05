@@ -8,9 +8,15 @@ const router = Router();
 router.post("/sign-up", AuthenticationController.signUp);
 router.post("/sign-in", AuthenticationController.signIn);
 
+const schemaAnswer = z.object({
+  option: z.string(),
+  isCorrect: z.boolean(),
+});
+
 const schemaQuestion = z.object({
   description: z.string(),
   experience: z.number().gte(1).optional(),
+  answers: z.array(schemaAnswer),
 });
 
 const schema = z.object({
@@ -26,13 +32,24 @@ router.post("/quiz", async (req, res) => {
   const { title, difficulty, description, questions, experience, user_id } =
     schema.parse(req.body);
 
+  const formattedQuestions = questions.map((question) => ({
+    description: question.description,
+    experience: question.experience,
+    answer: {
+      create: question.answers.map((answer) => ({
+        option: answer.option,
+        isCorrect: answer.isCorrect,
+      })),
+    },
+  }));
+
   const quiz = await prismaClient.quiz.create({
     data: {
       title,
       difficulty,
       description,
       question: {
-        create: questions,
+        create: formattedQuestions,
       },
       experience,
       user_id,
