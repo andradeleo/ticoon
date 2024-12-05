@@ -1,9 +1,43 @@
 import express from "express";
+import { z } from "zod";
+import { hash } from "bcryptjs";
+import { prismaClient } from "./application/libs/prisma";
 
 const app = express();
 
-app.get("/example", (_, res) => {
-  res.status(200).json({ message: "success" });
+app.use(express.json());
+
+const schema = z.object({
+  name: z.string().min(3),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+app.post("/sign-up", async (req, res) => {
+  const { name, email, password } = schema.parse(req.body);
+
+  const userAlreadyExists = await prismaClient.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (userAlreadyExists) {
+    res.status(409).json({ message: "email already exists" });
+    return;
+  }
+
+  const hashedPassword = await hash(password, 10);
+
+  await prismaClient.user.create({
+    data: {
+      email,
+      name,
+      password: hashedPassword,
+    },
+  });
+
+  res.status(204).json({ message: "sucess" });
 });
 
 app.listen(3001, () => {
