@@ -1,12 +1,9 @@
-import express, {
-  type Request,
-  type Response,
-  type NextFunction,
-} from "express";
-import { z, ZodError } from "zod";
+import express, {} from "express";
+import { z } from "zod";
 import { hash } from "bcryptjs";
 import { prismaClient } from "./application/libs/prisma";
 import "express-async-errors";
+import { errorHandler } from "./application/middlewares/errorHandler";
 
 const app = express();
 
@@ -44,16 +41,7 @@ app.post("/sign-up", async (req, res) => {
   res.status(204).json({ message: "sucess" });
 });
 
-app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
-  if (err instanceof ZodError) {
-    res.status(400).json({ message: "Bad request" });
-    return;
-  }
-
-  res.status(409).json({ message: err.message });
-
-  next();
-});
+app.use(errorHandler);
 
 app.listen(3001, () => {
   // biome-ignore lint/suspicious/noConsoleLog: <explanation>
