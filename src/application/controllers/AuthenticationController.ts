@@ -11,7 +11,7 @@ const schema = z.object({
 });
 
 class AuthenticationController {
-  async signIn(req: Request, res: Response): Promise<void> {
+  async signUp(req: Request, res: Response): Promise<void> {
     const { name, email, password } = schema.parse(req.body);
 
     const userAlreadyExists = await prismaClient.user.findUnique({

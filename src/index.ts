@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.json());
 
-app.post("/sign-up", AuthenticationController.signIn);
+app.post("/sign-up", AuthenticationController.signUp);
 
 app.use(errorHandler);
 
