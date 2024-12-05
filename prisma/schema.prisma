@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+
+  @@map("difficulty")
+}
+
 model User {
   id       String @id @default(uuid()) @db.Uuid()
   name     String
@@ -14,5 +22,21 @@ model User {
   password String
   level    Int    @default(1)
 
+  quiz Quiz[]
+
   @@map("users")
+}
+
+model Quiz {
+  id          String     @id @default(uuid()) @db.Uuid()
+  title       String
+  difficulty  Difficulty
+  description String?
+  experience  Int?
+  created_at  DateTime   @default(now())
+
+  User    User   @relation(fields: [user_id], references: [id])
+  user_id String @db.Uuid()
+
+  @@map("quizzes")
 }
