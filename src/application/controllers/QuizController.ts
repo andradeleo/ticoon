@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prismaClient } from "../libs/prisma";
 import type { Request, Response } from "express";
+import { NotFound } from "../errors/NotFound";
 
 const schemaAnswer = z.object({
   option: z.string(),
@@ -20,6 +21,10 @@ const schema = z.object({
   questions: z.array(schemaQuestion),
   experience: z.number().gte(1).optional(),
   user_id: z.string().uuid(),
+});
+
+const schemaUUID = z.object({
+  id: z.string().uuid(),
 });
 
 class QuizController {
@@ -57,6 +62,37 @@ class QuizController {
   async findAll(_: Request, res: Response): Promise<void> {
     const allQuizzes = await prismaClient.quiz.findMany();
     res.status(200).json({ data: allQuizzes });
+  }
+
+  async findById(req: Request, res: Response): Promise<void> {
+    const { id } = schemaUUID.parse(req.params);
+
+    const quiz = await prismaClient.quiz.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        question: {
+          select: {
+            id: true,
+            description: true,
+            experience: true,
+            answer: {
+              select: {
+                id: true,
+                option: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!quiz) {
+      throw new NotFound(404, "Quiz not found");
+    }
+
+    res.status(200).json(quiz);
   }
 }
 
