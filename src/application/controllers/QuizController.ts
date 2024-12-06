@@ -43,6 +43,33 @@ class QuizController {
       },
     }));
 
+    const totalExperience = formattedQuestions.reduce(
+      (total, { experience }) => {
+        const xp = experience ?? 0;
+        return total + xp;
+      },
+      0,
+    );
+
+    let xp: number | null = 0;
+
+    if (totalExperience && experience) {
+      const isValid = totalExperience === experience;
+      if (!isValid) {
+        throw new Error(
+          "The question experience sum should match quiz experience",
+        );
+      }
+    }
+
+    if (totalExperience) {
+      xp = totalExperience;
+    } else if (experience) {
+      xp = experience;
+    } else {
+      xp = null;
+    }
+
     const quiz = await prismaClient.quiz.create({
       data: {
         title,
@@ -51,7 +78,7 @@ class QuizController {
         question: {
           create: formattedQuestions,
         },
-        experience,
+        experience: xp,
         user_id,
       },
     });
