@@ -11,14 +11,14 @@ const schemaAnswer = z.object({
 const schemaQuestion = z.object({
   description: z.string(),
   experience: z.number().gte(1).optional(),
-  answers: z.array(schemaAnswer),
+  answers: z.array(schemaAnswer).min(2),
 });
 
 const schema = z.object({
   title: z.string(),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
   description: z.string().optional(),
-  questions: z.array(schemaQuestion),
+  questions: z.array(schemaQuestion).min(2),
   experience: z.number().gte(1).optional(),
   user_id: z.string().uuid(),
 });
