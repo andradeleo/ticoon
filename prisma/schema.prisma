@@ -50,7 +50,7 @@ model Question {
 
   answer Answer[]
 
-  Quiz    Quiz   @relation(fields: [quiz_id], references: [id])
+  Quiz    Quiz   @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
   quiz_id String @db.Uuid()
 
   @@map("questions")
@@ -61,7 +61,7 @@ model Answer {
   option    String
   isCorrect Boolean
 
-  Question    Question @relation(fields: [question_id], references: [id])
+  Question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
   question_id String   @db.Uuid()
 
   @@map("answers")
