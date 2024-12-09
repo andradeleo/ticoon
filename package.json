@@ -8,6 +8,9 @@
     "biome:check": "npx @biomejs/biome check --write",
     "biome:format": "npx @biomejs/biome format --write",
     "biome:lint": "npx @biomejs/biome lint --write",
+    "services:up": "docker compose up -d",
+    "services:stop": "docker compose stop",
+    "services:down": "docker compose down",
     "prepare": "husky",
     "commit": "cz"
   },
