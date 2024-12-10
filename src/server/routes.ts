@@ -1,11 +1,13 @@
 import { Router } from "express";
-import AuthenticationController from "src/application/controllers/AuthenticationController";
+import { makeAuthenticationController } from "src/factories/makeAuthenticationController";
 import { makeQuizController } from "src/factories/makeQuizController";
 
 const router = Router();
 
-router.post("/sign-up", AuthenticationController.signUp);
-router.post("/sign-in", AuthenticationController.signIn);
+const authenticationController = makeAuthenticationController();
+
+router.post("/sign-up", authenticationController.signUp);
+router.post("/sign-in", authenticationController.signIn);
 
 const quizController = makeQuizController();
 
