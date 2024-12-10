@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { QuizService } from "../services/QuizService";
 import { QuizRepository } from "../repositories/QuizRepository";
+import { ExperienceService } from "../services/ExperienceService";
 
 class QuizController {
   constructor(private quizService: QuizService) {
@@ -19,4 +20,6 @@ class QuizController {
   }
 }
 
-export default new QuizController(new QuizService(new QuizRepository()));
+export default new QuizController(
+  new QuizService(new QuizRepository(), new ExperienceService()),
+);

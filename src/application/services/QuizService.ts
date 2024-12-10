@@ -1,14 +1,16 @@
 import { quizSchema, type QuizType } from "src/schemas/quiz";
 import type { QuizRepository } from "../repositories/QuizRepository";
+import type { ExperienceService } from "./ExperienceService";
 
 export class QuizService {
-  constructor(private readonly quizRepository: QuizRepository) {}
+  constructor(
+    private readonly quizRepository: QuizRepository,
+    private readonly experienceService: ExperienceService,
+  ) {}
 
   async create(quiz: QuizType): Promise<void> {
     const { title, difficulty, description, questions, experience, user_id } =
       quizSchema.parse(quiz);
-
-    let xp: number | null = 0;
 
     const formattedQuestions = questions.map((question) => ({
       description: question.description,
@@ -21,37 +23,17 @@ export class QuizService {
       },
     }));
 
-    const totalExperience = formattedQuestions.reduce(
-      (total, { experience }) => {
-        const xp = experience ?? 0;
-        return total + xp;
-      },
-      0,
+    const totalExperience = this.experienceService.getTotalExperience(
+      questions,
+      experience,
     );
-
-    if (totalExperience && experience) {
-      const isValid = totalExperience === experience;
-      if (!isValid) {
-        throw new Error(
-          "The question experience sum should match quiz experience",
-        );
-      }
-    }
-
-    if (totalExperience) {
-      xp = totalExperience;
-    } else if (experience) {
-      xp = experience;
-    } else {
-      xp = null;
-    }
 
     await this.quizRepository.create({
       title,
       difficulty,
       description,
       questions: formattedQuestions,
-      experience: xp,
+      experience: totalExperience,
       user_id,
     });
   }
