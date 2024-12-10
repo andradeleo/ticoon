@@ -1,6 +1,7 @@
 import { quizSchema, type QuizType } from "src/schemas/quiz";
 import type { QuizRepository } from "../repositories/QuizRepository";
 import type { ExperienceService } from "./ExperienceService";
+import type { IOutput } from "../interfaces/output";
 
 export class QuizService {
   constructor(
@@ -8,20 +9,9 @@ export class QuizService {
     private readonly experienceService: ExperienceService,
   ) {}
 
-  async create(quiz: QuizType): Promise<void> {
+  async create(quiz: QuizType): Promise<IOutput> {
     const { title, difficulty, description, questions, experience, user_id } =
       quizSchema.parse(quiz);
-
-    const formattedQuestions = questions.map((question) => ({
-      description: question.description,
-      experience: question.experience,
-      answer: {
-        create: question.answers.map((answer) => ({
-          option: answer.option,
-          isCorrect: answer.isCorrect,
-        })),
-      },
-    }));
 
     const totalExperience = this.experienceService.getTotalExperience(
       questions,
@@ -32,14 +22,26 @@ export class QuizService {
       title,
       difficulty,
       description,
-      questions: formattedQuestions,
+      questions,
       experience: totalExperience,
       user_id,
     });
+
+    return {
+      statusCode: 201,
+      body: {
+        success: true,
+        data: {},
+        count: 0,
+      },
+    };
   }
 
-  // biome-ignore lint/nursery/useExplicitType: <explanation>
-  async findAll() {
-    return await this.quizRepository.findAll();
+  async findAll(): Promise<IOutput> {
+    const { body } = await this.quizRepository.findAll();
+    return {
+      statusCode: 200,
+      body,
+    };
   }
 }

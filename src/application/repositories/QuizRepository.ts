@@ -1,32 +1,45 @@
+import type { QuizType } from "src/schemas/quiz";
 import { prismaClient } from "../libs/prisma";
+import type { IOutput } from "../interfaces/output";
 
 export class QuizRepository {
-  // biome-ignore lint/nursery/useExplicitType: <explanation>
-  async create({
-    title,
-    difficulty,
-    description,
-    questions,
-    experience,
-    user_id,
+  async create(quiz: QuizType): Promise<void> {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  }: any) {
+    const formattedQuestions = quiz.questions.map((question: any) => ({
+      description: question.description,
+      experience: question.experience,
+      answer: {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        create: question.answers.map((answer: any) => ({
+          option: answer.option,
+          isCorrect: answer.isCorrect,
+        })),
+      },
+    }));
+
     await prismaClient.quiz.create({
       data: {
-        title,
-        difficulty,
-        description,
+        title: quiz.title,
+        difficulty: quiz.difficulty,
+        description: quiz.description,
         question: {
-          create: questions,
+          create: formattedQuestions,
         },
-        experience,
-        user_id,
+        experience: quiz.experience,
+        user_id: quiz.user_id,
       },
     });
   }
 
-  // biome-ignore lint/nursery/useExplicitType: <explanation>
-  async findAll() {
-    return await prismaClient.quiz.findMany();
+  async findAll(): Promise<IOutput> {
+    const quizzes = await prismaClient.quiz.findMany();
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        data: quizzes,
+        count: quizzes.length,
+      },
+    };
   }
 }

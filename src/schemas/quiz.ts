@@ -7,7 +7,7 @@ const answerSchema = z.object({
 
 const questionSchema = z.object({
   description: z.string(),
-  experience: z.number().gte(1).optional(),
+  experience: z.number().nullable().optional(),
   answers: z.array(answerSchema).min(2),
 });
 
@@ -16,7 +16,7 @@ export const quizSchema = z.object({
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
   description: z.string().optional(),
   questions: z.array(questionSchema).min(2),
-  experience: z.number().gte(1).optional(),
+  experience: z.number().nullable().optional(),
   user_id: z.string().uuid(),
 });
 

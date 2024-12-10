@@ -10,13 +10,13 @@ class QuizController {
   }
 
   async create(req: Request, res: Response): Promise<void> {
-    const quiz = await this.quizService.create(req.body);
-    res.status(201).json({ data: quiz });
+    const result = await this.quizService.create(req.body);
+    res.status(result.statusCode).json(result.body);
   }
 
   async findAll(_: Request, res: Response): Promise<void> {
-    const quizzes = await this.quizService.findAll();
-    res.status(200).json({ data: quizzes });
+    const result = await this.quizService.findAll();
+    res.status(result.statusCode).json(result.body);
   }
 }
 
