@@ -20,4 +20,6 @@ export const quizSchema = z.object({
   user_id: z.string().uuid(),
 });
 
+export type answerType = z.infer<typeof answerSchema>;
+export type QuestionType = z.infer<typeof questionSchema>;
 export type QuizType = z.infer<typeof quizSchema>;
