@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
-import { AuthenticationService } from "../services/AuthenticationService";
-import { AuthenticationRepository } from "../repositories/AuthenticationRepository";
+import type { AuthenticationService } from "../services/AuthenticationService";
 
-class AuthenticationController {
+export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {
     this.signUp = this.signUp.bind(this);
     this.signIn = this.signIn.bind(this);
@@ -18,7 +17,3 @@ class AuthenticationController {
     res.status(200).json({ accessToken });
   }
 }
-
-export default new AuthenticationController(
-  new AuthenticationService(new AuthenticationRepository()),
-);

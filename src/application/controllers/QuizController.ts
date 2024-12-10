@@ -1,9 +1,7 @@
 import type { Request, Response } from "express";
-import { QuizService } from "../services/QuizService";
-import { QuizRepository } from "../repositories/QuizRepository";
-import { ExperienceService } from "../services/ExperienceService";
+import type { QuizService } from "../services/QuizService";
 
-class QuizController {
+export class QuizController {
   constructor(private quizService: QuizService) {
     this.create = this.create.bind(this);
     this.findAll = this.findAll.bind(this);
@@ -19,7 +17,3 @@ class QuizController {
     res.status(result.statusCode).json(result.body);
   }
 }
-
-export default new QuizController(
-  new QuizService(new QuizRepository(), new ExperienceService()),
-);

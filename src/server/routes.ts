@@ -1,13 +1,15 @@
 import { Router } from "express";
 import AuthenticationController from "src/application/controllers/AuthenticationController";
-import QuizController from "src/application/controllers/QuizController";
+import { makeQuizController } from "src/factories/makeQuizController";
 
 const router = Router();
 
 router.post("/sign-up", AuthenticationController.signUp);
 router.post("/sign-in", AuthenticationController.signIn);
 
-router.post("/quiz", QuizController.create);
-router.get("/quiz", QuizController.findAll);
+const quizController = makeQuizController();
+
+router.post("/quiz", quizController.create);
+router.get("/quiz", quizController.findAll);
 
 export default router;
