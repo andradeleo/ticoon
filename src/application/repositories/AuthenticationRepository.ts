@@ -1,5 +1,5 @@
 import type { signUpType } from "src/schemas/authentication";
-import { prismaClient } from "../libs/prisma";
+import { prismaClient } from "../../libs/prisma";
 
 export class AuthenticationRepository {
   // biome-ignore lint/nursery/useExplicitType: <explanation>

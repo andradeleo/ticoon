@@ -1,5 +1,5 @@
 import type { answerType, QuestionType, QuizType } from "src/schemas/quiz";
-import { prismaClient } from "../libs/prisma";
+import { prismaClient } from "../../libs/prisma";
 import type { IOutput } from "../interfaces/output";
 
 export class QuizRepository {
