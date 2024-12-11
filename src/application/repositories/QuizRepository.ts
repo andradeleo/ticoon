@@ -1,19 +1,11 @@
-import type { answerType, QuestionType, QuizType } from "src/schemas/quiz";
+import type { QuizType } from "src/schemas/quiz";
 import { prismaClient } from "../../libs/prisma";
 import type { IOutput } from "../interfaces/output";
+import { formatQuestionForInsert } from "src/helpers/quizHelper";
 
 export class QuizRepository {
   async create(quiz: QuizType): Promise<void> {
-    const formattedQuestions = quiz.questions.map((question: QuestionType) => ({
-      description: question.description,
-      experience: question.experience,
-      answer: {
-        create: question.answers.map((answer: answerType) => ({
-          option: answer.option,
-          isCorrect: answer.isCorrect,
-        })),
-      },
-    }));
+    const questions = formatQuestionForInsert(quiz.questions);
 
     await prismaClient.quiz.create({
       data: {
@@ -23,7 +15,7 @@ export class QuizRepository {
         difficulty: quiz.difficulty,
         description: quiz.description,
         question: {
-          create: formattedQuestions,
+          create: questions,
         },
       },
     });
