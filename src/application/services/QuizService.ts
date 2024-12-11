@@ -31,8 +31,7 @@ export class QuizService {
       statusCode: 201,
       body: {
         success: true,
-        data: {},
-        count: 0,
+        data: null,
       },
     };
   }
