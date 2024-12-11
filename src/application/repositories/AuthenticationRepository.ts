@@ -25,7 +25,7 @@ export class AuthenticationRepository {
       body: {
         success: true,
         data: {
-          user: user as signUpType,
+          user,
         },
       },
     };

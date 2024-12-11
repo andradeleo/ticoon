@@ -10,6 +10,7 @@ import { compare, hash } from "bcryptjs";
 import { InvalidCredentials } from "../errors/InvalidCredentials";
 import { sign } from "jsonwebtoken";
 import type { IOutput } from "../interfaces/output";
+import type { userType } from "src/schemas/user";
 
 export class AuthenticationService {
   constructor(
@@ -45,20 +46,22 @@ export class AuthenticationService {
   async signIn(user: signInType): Promise<IOutput> {
     const { email, password } = schemaSignIn.parse(user);
 
-    const { body } = await this.authenticationRepository.findUserByEmail(email);
+    const result = await this.authenticationRepository.findUserByEmail(email);
 
-    if (!body.data) {
+    if (!result.body.data) {
       throw new InvalidCredentials();
     }
 
-    const isPasswordValid = await compare(password, body.data.password);
+    const { password: userPassword } = result.body.data.user as userType;
+
+    const isPasswordValid = await compare(password, userPassword);
 
     if (!isPasswordValid) {
       throw new InvalidCredentials();
     }
 
     const accessToken = sign(
-      { sub: body.data.id },
+      { sub: result.body.data.id },
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
       process.env.JWT_SECRET!,
       { expiresIn: "1d" },
