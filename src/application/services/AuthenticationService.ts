@@ -9,20 +9,20 @@ import type { AuthenticationRepository } from "../repositories/AuthenticationRep
 import { compare, hash } from "bcryptjs";
 import { InvalidCredentials } from "../errors/InvalidCredentials";
 import { sign } from "jsonwebtoken";
+import type { IOutput } from "../interfaces/output";
 
 export class AuthenticationService {
   constructor(
     private readonly authenticationRepository: AuthenticationRepository,
   ) {}
 
-  // biome-ignore lint/nursery/useExplicitType: <explanation>
-  async signUp(user: signUpType) {
+  async signUp(user: signUpType): Promise<IOutput> {
     const { name, email, password } = schemaSignUp.parse(user);
 
-    const currentUser = this.authenticationRepository.findUserByEmail(email);
+    const { body } = await this.authenticationRepository.findUserByEmail(email);
 
-    if (!currentUser) {
-      return new UserAlreadyExists();
+    if (!body.data) {
+      throw new UserAlreadyExists();
     }
 
     const hashedPassword = await hash(password, 10);
@@ -32,32 +32,46 @@ export class AuthenticationService {
       name,
       password: hashedPassword,
     });
+
+    return {
+      statusCode: 201,
+      body: {
+        success: true,
+        data: null,
+      },
+    };
   }
 
-  // biome-ignore lint/nursery/useExplicitType: <explanation>
-  async signIn(user: signInType) {
+  async signIn(user: signInType): Promise<IOutput> {
     const { email, password } = schemaSignIn.parse(user);
 
-    const currentUser =
-      await this.authenticationRepository.findUserByEmail(email);
+    const { body } = await this.authenticationRepository.findUserByEmail(email);
 
-    if (!currentUser) {
+    if (!body.data) {
       throw new InvalidCredentials();
     }
 
-    const isPasswordValid = await compare(password, currentUser.password);
+    const isPasswordValid = await compare(password, body.data.password);
 
     if (!isPasswordValid) {
       throw new InvalidCredentials();
     }
 
     const accessToken = sign(
-      { sub: currentUser.id },
+      { sub: body.data.id },
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
       process.env.JWT_SECRET!,
       { expiresIn: "1d" },
     );
 
-    return accessToken;
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        data: {
+          accessToken,
+        },
+      },
+    };
   }
 }

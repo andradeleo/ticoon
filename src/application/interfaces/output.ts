@@ -4,6 +4,6 @@ export interface IOutput {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     data: any;
     success: boolean;
-    count: number;
+    count?: number;
   };
 }
