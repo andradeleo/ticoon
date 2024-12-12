@@ -32,4 +32,32 @@ export class QuizRepository {
       },
     };
   }
+
+  async findQuizForActivity(id: string): Promise<IOutput> {
+    const quiz = await prismaClient.quiz.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        question: {
+          include: {
+            answer: {
+              select: {
+                id: true,
+                option: true,
+                question_id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        data: quiz,
+      },
+    };
+  }
 }
