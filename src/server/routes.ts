@@ -13,7 +13,8 @@ const quizController = makeQuizController();
 
 router.post("/quiz", quizController.create);
 router.get("/quiz", quizController.findAll);
-
 router.get("/quiz/:id", quizController.findQuizForActivity);
+
+router.put("/quiz/:id", quizController.updateQuiz);
 
 export default router;

@@ -23,3 +23,32 @@ export const quizSchema = z.object({
 export type answerType = z.infer<typeof answerSchema>;
 export type QuestionType = z.infer<typeof questionSchema>;
 export type QuizType = z.infer<typeof quizSchema>;
+
+const answerEditSchema = z.object({
+  id: z.string().uuid(),
+  option: z.string(),
+  isCorrect: z.boolean(),
+});
+
+const questionEditSchema = z.object({
+  id: z.string().uuid(),
+  description: z.string(),
+  experience: z.number().nullable().optional(),
+  answers: z.array(answerEditSchema).min(2),
+  quiz_id: z.string().uuid(),
+});
+
+export const quizEditSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
+  description: z.string().optional(),
+  questions: z.array(questionEditSchema).min(2),
+  experience: z.number().nullable().optional(),
+  created_at: z.string(),
+  user_id: z.string().uuid(),
+});
+
+export type answerEditType = z.infer<typeof answerEditSchema>;
+export type QuestionEditType = z.infer<typeof questionEditSchema>;
+export type QuizEditType = z.infer<typeof quizEditSchema>;

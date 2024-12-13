@@ -1,7 +1,10 @@
-import type { QuizType } from "src/schemas/quiz";
+import type { QuizEditType, QuizType } from "src/schemas/quiz";
 import { prismaClient } from "../../libs/prisma";
 import type { IOutput } from "../interfaces/output";
-import { formatQuestionForInsert } from "src/helpers/quizHelper";
+import {
+  formatQuestionForInsert,
+  formatQuestionForUpdate,
+} from "src/helpers/quizHelper";
 
 export class QuizRepository {
   async create(quiz: QuizType): Promise<void> {
@@ -59,5 +62,34 @@ export class QuizRepository {
         data: quiz,
       },
     };
+  }
+
+  async update(quiz: QuizEditType, id: string): Promise<void> {
+    const questions = formatQuestionForUpdate(quiz.questions);
+
+    await prismaClient.quiz.update({
+      where: {
+        id: id,
+      },
+      data: {
+        title: quiz.title,
+        user_id: quiz.user_id,
+        experience: quiz.experience,
+        difficulty: quiz.difficulty,
+        description: quiz.description,
+        question: {
+          update: questions.map((question) => ({
+            where: { id: question.id },
+            data: {
+              description: question.description,
+              experience: question.experience,
+              answer: {
+                updateMany: question.answer.updateMany,
+              },
+            },
+          })),
+        },
+      },
+    });
   }
 }

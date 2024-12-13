@@ -1,4 +1,9 @@
-import { quizSchema, type QuizType } from "src/schemas/quiz";
+import {
+  quizEditSchema,
+  type QuizEditType,
+  quizSchema,
+  type QuizType,
+} from "src/schemas/quiz";
 import type { QuizRepository } from "../repositories/QuizRepository";
 import type { ExperienceService } from "./ExperienceService";
 import type { IOutput } from "../interfaces/output";
@@ -49,6 +54,31 @@ export class QuizService {
     return {
       statusCode: 200,
       body,
+    };
+  }
+
+  async update(quiz: QuizEditType, id: string): Promise<IOutput> {
+    const parsedQuiz = quizEditSchema.parse(quiz);
+
+    const totalExperience = this.experienceService.getTotalExperience(
+      parsedQuiz.questions,
+      parsedQuiz.experience,
+    );
+
+    await this.quizRepository.update(
+      {
+        ...parsedQuiz,
+        experience: totalExperience,
+      },
+      id,
+    );
+
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        data: null,
+      },
     };
   }
 }
