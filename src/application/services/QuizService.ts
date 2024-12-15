@@ -1,8 +1,8 @@
 import {
   quizEditSchema,
-  type QuizEditType,
   quizSchema,
   type QuizType,
+  type SubmittedQuizType,
 } from "src/schemas/quiz";
 import type { QuizRepository } from "../repositories/QuizRepository";
 import type { ExperienceService } from "./ExperienceService";
@@ -57,7 +57,7 @@ export class QuizService {
     };
   }
 
-  async update(quiz: QuizEditType, id: string): Promise<IOutput> {
+  async update(quiz: QuizType, id: string): Promise<IOutput> {
     const parsedQuiz = quizEditSchema.parse(quiz);
 
     const totalExperience = this.experienceService.getTotalExperience(
@@ -78,6 +78,16 @@ export class QuizService {
       body: {
         success: true,
         data: null,
+      },
+    };
+  }
+
+  async submit(submittedQuiz: SubmittedQuizType, id: string): Promise<IOutput> {
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        data: {},
       },
     };
   }

@@ -17,4 +17,6 @@ router.get("/quiz/:id", quizController.findQuizForActivity);
 
 router.put("/quiz/:id", quizController.updateQuiz);
 
+router.post("/submit-quiz/:id", quizController.submit);
+
 export default router;

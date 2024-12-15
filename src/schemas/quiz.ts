@@ -5,7 +5,7 @@ const answerSchema = z.object({
   isCorrect: z.boolean(),
 });
 
-const questionSchema = z.object({
+export const questionSchema = z.object({
   description: z.string(),
   experience: z.number().nullable().optional(),
   answers: z.array(answerSchema).min(2),
@@ -20,7 +20,7 @@ export const quizSchema = z.object({
   user_id: z.string().uuid(),
 });
 
-export type answerType = z.infer<typeof answerSchema>;
+export type AnswerType = z.infer<typeof answerSchema>;
 export type QuestionType = z.infer<typeof questionSchema>;
 export type QuizType = z.infer<typeof quizSchema>;
 
@@ -52,3 +52,10 @@ export const quizEditSchema = z.object({
 export type answerEditType = z.infer<typeof answerEditSchema>;
 export type QuestionEditType = z.infer<typeof questionEditSchema>;
 export type QuizEditType = z.infer<typeof quizEditSchema>;
+
+export const submittedQuizSchema = z.object({
+  questions: z.array(questionSchema).min(2),
+  user_id: z.string().uuid(),
+});
+
+export type SubmittedQuizType = z.infer<typeof submittedQuizSchema>;

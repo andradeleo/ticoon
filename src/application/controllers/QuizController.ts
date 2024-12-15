@@ -7,6 +7,7 @@ export class QuizController {
     this.findAll = this.findAll.bind(this);
     this.findQuizForActivity = this.findQuizForActivity.bind(this);
     this.updateQuiz = this.updateQuiz.bind(this);
+    this.submit = this.submit.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -28,6 +29,12 @@ export class QuizController {
   async updateQuiz(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     const result = await this.quizService.update(req.body, id);
+    res.status(result.statusCode).json(result.body);
+  }
+
+  async submit(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+    const result = await this.quizService.submit(req.body, id);
     res.status(result.statusCode).json(result.body);
   }
 }
