@@ -54,8 +54,7 @@ export type QuestionEditType = z.infer<typeof questionEditSchema>;
 export type QuizEditType = z.infer<typeof quizEditSchema>;
 
 export const submittedQuestionSchema = z.object({
-  description: z.string(),
-  experience: z.number().nullable().optional(),
+  id: z.string().uuid(),
   answer: z.string().uuid(),
 });
 

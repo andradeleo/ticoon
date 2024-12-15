@@ -10,43 +10,52 @@ export class ValidationService {
     createdQuestions: any,
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   ): any {
-    this.setCorrectAnswers(createdQuestions);
+    this.correctAnswers = this.setCorrectAnswers(createdQuestions);
 
-    let result = 0;
-    let experience = 0;
+    let numberOfCorrectQuestions = 0;
 
+    const submitted = this.setCorrectAnswers(submittedQuestions);
+
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     // biome-ignore lint/complexity/noForEach: <explanation>
-    submittedQuestions.forEach((question) => {
-      const isCorrect = this.correctAnswers.includes(question.answer);
+    this.correctAnswers.forEach((answer: any, index: number) => {
+      const answerId = answer.answer_id;
 
-      if (isCorrect) {
-        result += 1;
-        experience += question?.experience ? question?.experience : 0;
+      const response = submitted[index];
+
+      if (response.answer_id === answerId) {
+        numberOfCorrectQuestions += 1;
       }
     });
 
     return {
-      correct_answers: result,
-      experience,
+      banco_de_dados: this.correctAnswers,
+      respondidas: submitted,
+      numberOfCorrectQuestions,
     };
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  public setCorrectAnswers(answers: any): void {
-    const correctAnswersId: string[] = [];
+  public setCorrectAnswers(questions: any): {
+    question_id: string;
+    answer_id: string;
+  }[] {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    const correctAnswers = answers.flatMap((qst: any) =>
-      qst.answer.filter(
-        (ans: { isCorrect: boolean }) => ans.isCorrect === true,
-      ),
-    );
+    return questions.map((qst: any) => {
+      const questionId = qst.id;
 
-    // biome-ignore lint/complexity/noForEach: <explanation>
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    correctAnswers.forEach((ans: any) => {
-      correctAnswersId.push(ans.id);
+      const answer = Array.isArray(qst.answer)
+        ? qst.answer.find(
+            (ans: { isCorrect: boolean }) => ans.isCorrect === true,
+          )
+        : {
+            id: qst.answer,
+          };
+
+      return {
+        question_id: questionId,
+        answer_id: answer.id,
+      };
     });
-
-    this.correctAnswers = correctAnswersId;
   }
 }
