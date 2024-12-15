@@ -1,17 +1,20 @@
 import {
   quizEditSchema,
   quizSchema,
+  submittedQuizSchema,
   type QuizType,
   type SubmittedQuizType,
 } from "src/schemas/quiz";
 import type { QuizRepository } from "../repositories/QuizRepository";
 import type { ExperienceService } from "./ExperienceService";
 import type { IOutput } from "../interfaces/output";
+import type { ValidationService } from "./ValidationService";
 
 export class QuizService {
   constructor(
     private readonly quizRepository: QuizRepository,
     private readonly experienceService: ExperienceService,
+    private readonly validationService: ValidationService,
   ) {}
 
   async create(quiz: QuizType): Promise<IOutput> {
@@ -82,12 +85,26 @@ export class QuizService {
     };
   }
 
-  async submit(submittedQuiz: SubmittedQuizType, id: string): Promise<IOutput> {
+  async submit(quiz: SubmittedQuizType, id: string): Promise<IOutput> {
+    const { question } = submittedQuizSchema.parse(quiz);
+    const createdQuiz = await this.quizRepository.findById(id);
+
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const x = createdQuiz.body.data as any;
+    const createdQuestions = x.question;
+
+    const correctAnswers = this.validationService.validateQuestion(
+      question,
+      createdQuestions,
+    );
+
+    // validar se as repostas estão corretas
+
     return {
       statusCode: 200,
       body: {
         success: true,
-        data: {},
+        data: correctAnswers,
       },
     };
   }
