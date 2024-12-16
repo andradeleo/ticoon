@@ -113,11 +113,17 @@ export class QuizService {
       };
     });
 
+    const userExperienceGained =
+      this.experienceService.sumExperienceFromCorrectAnswers(
+        correctAnswers.answers,
+      );
+
+    // atualizar experiência do usuário.
+
     const validatedQuiz = {
       ...x,
       question: questions,
     };
-    // validar se as repostas estão corretas
 
     return {
       statusCode: 200,
@@ -125,6 +131,7 @@ export class QuizService {
         success: true,
         data: {
           quiz: validatedQuiz,
+          experience: userExperienceGained,
         },
       },
     };

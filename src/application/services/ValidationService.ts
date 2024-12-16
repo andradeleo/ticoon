@@ -28,6 +28,7 @@ export class ValidationService {
         user_answer: response.answer_id,
         quiz_answer: answerId,
         isCorrect: response.answer_id === answerId,
+        experience: answer.experience,
       });
     });
 
@@ -59,6 +60,7 @@ export class ValidationService {
       return {
         question_id: questionId,
         answer_id: answer.id,
+        experience: qst.experience,
       };
     });
   }

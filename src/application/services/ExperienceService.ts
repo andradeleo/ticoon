@@ -17,4 +17,11 @@ export class ExperienceService {
 
     return this.experience;
   }
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  sumExperienceFromCorrectAnswers(answers: any[]): number {
+    return answers.reduce((acc, current) => {
+      return current.isCorrect ? acc + current.experience : acc + 0;
+    }, 0);
+  }
 }
