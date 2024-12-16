@@ -98,13 +98,34 @@ export class QuizService {
       createdQuestions,
     );
 
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const questions = x.question.map((qst: any, index: number) => {
+      return {
+        ...qst,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        answer: qst.answer.map((ans: any) => {
+          return {
+            ...ans,
+            answer_marked: correctAnswers.answers[index].user_answer === ans.id,
+          };
+        }),
+        isCorrect: correctAnswers.answers[index].isCorrect,
+      };
+    });
+
+    const validatedQuiz = {
+      ...x,
+      question: questions,
+    };
     // validar se as repostas estão corretas
 
     return {
       statusCode: 200,
       body: {
         success: true,
-        data: correctAnswers,
+        data: {
+          quiz: validatedQuiz,
+        },
       },
     };
   }

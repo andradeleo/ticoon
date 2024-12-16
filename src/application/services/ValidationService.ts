@@ -12,7 +12,8 @@ export class ValidationService {
   ): any {
     this.correctAnswers = this.setCorrectAnswers(createdQuestions);
 
-    let numberOfCorrectQuestions = 0;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const resp: any = [];
 
     const submitted = this.setCorrectAnswers(submittedQuestions);
 
@@ -23,15 +24,18 @@ export class ValidationService {
 
       const response = submitted[index];
 
-      if (response.answer_id === answerId) {
-        numberOfCorrectQuestions += 1;
-      }
+      resp.push({
+        user_answer: response.answer_id,
+        quiz_answer: answerId,
+        isCorrect: response.answer_id === answerId,
+      });
     });
 
     return {
-      banco_de_dados: this.correctAnswers,
-      respondidas: submitted,
-      numberOfCorrectQuestions,
+      answers: resp,
+      numberOfCorrectQuestions: resp.filter(
+        (res: { isCorrect: boolean }) => res.isCorrect === true,
+      ).length,
     };
   }
 
