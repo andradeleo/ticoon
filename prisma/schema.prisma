@@ -20,7 +20,7 @@ model User {
   name     String
   email    String @unique
   password String
-  level    Int    @default(1)
+  level    Int    @default(1000)
 
   quiz Quiz[]
 
