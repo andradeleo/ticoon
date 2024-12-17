@@ -9,12 +9,15 @@ import type { QuizRepository } from "../repositories/QuizRepository";
 import type { ExperienceService } from "./ExperienceService";
 import type { IOutput } from "../interfaces/output";
 import type { ValidationService } from "./ValidationService";
+import type { UserRepository } from "../repositories/UserRepository";
+import { NotFound } from "../errors/NotFound";
 
 export class QuizService {
   constructor(
     private readonly quizRepository: QuizRepository,
     private readonly experienceService: ExperienceService,
     private readonly validationService: ValidationService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async create(quiz: QuizType): Promise<IOutput> {
@@ -118,7 +121,16 @@ export class QuizService {
         correctAnswers.answers,
       );
 
-    // atualizar experiência do usuário.
+    const user = await this.userRepository.findById(quiz.user_id);
+
+    if (!user) {
+      throw new NotFound();
+    }
+
+    await this.userRepository.UpdateExperience(
+      user.level + userExperienceGained,
+      user.id,
+    );
 
     const validatedQuiz = {
       ...x,
