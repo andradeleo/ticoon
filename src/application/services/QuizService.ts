@@ -55,8 +55,8 @@ export class QuizService {
     };
   }
 
-  async findQuizForActivity(id: string): Promise<IOutput> {
-    const { body } = await this.quizRepository.findQuizForActivity(id);
+  async findForActivity(id: string): Promise<IOutput> {
+    const { body } = await this.quizRepository.findForActivity(id);
     return {
       statusCode: 200,
       body,

@@ -57,7 +57,7 @@ export class QuizRepository {
     };
   }
 
-  async findQuizForActivity(id: string): Promise<IOutput> {
+  async findForActivity(id: string): Promise<IOutput> {
     const quiz = await prismaClient.quiz.findUniqueOrThrow({
       where: {
         id,

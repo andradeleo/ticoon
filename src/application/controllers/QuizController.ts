@@ -5,8 +5,8 @@ export class QuizController {
   constructor(private quizService: QuizService) {
     this.create = this.create.bind(this);
     this.findAll = this.findAll.bind(this);
-    this.findQuizForActivity = this.findQuizForActivity.bind(this);
-    this.updateQuiz = this.updateQuiz.bind(this);
+    this.findForActivity = this.findForActivity.bind(this);
+    this.update = this.update.bind(this);
     this.submit = this.submit.bind(this);
   }
 
@@ -20,13 +20,13 @@ export class QuizController {
     res.status(result.statusCode).json(result.body);
   }
 
-  async findQuizForActivity(req: Request, res: Response): Promise<void> {
+  async findForActivity(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
-    const result = await this.quizService.findQuizForActivity(id);
+    const result = await this.quizService.findForActivity(id);
     res.status(result.statusCode).json(result.body);
   }
 
-  async updateQuiz(req: Request, res: Response): Promise<void> {
+  async update(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     const result = await this.quizService.update(req.body, id);
     res.status(result.statusCode).json(result.body);
