@@ -15,7 +15,6 @@ export function errorHandler(
         name: err.name,
         message: err.message,
         issues: err.issues,
-        stack: err.stack,
       },
     });
     return;
@@ -27,7 +26,6 @@ export function errorHandler(
       data: {
         name: err.name,
         message: err.message,
-        stack: err.stack,
       },
     });
     return;
@@ -38,7 +36,6 @@ export function errorHandler(
     data: {
       name: err.name,
       message: err.message,
-      stack: err.stack,
     },
   });
 
