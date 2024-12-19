@@ -1,10 +1,63 @@
 import type { QuizEditType, QuizType } from "src/schemas/quiz";
 import { prismaClient } from "../../libs/prisma";
-import type { IOutput } from "../interfaces/output";
 import {
   formatQuestionForInsert,
   formatQuestionForUpdate,
 } from "src/helpers/quizHelper";
+import type { $Enums, Difficulty } from "@prisma/client";
+
+interface QuizActivity {
+  id: string;
+  title: string;
+  difficulty: Difficulty;
+  description?: string | null;
+  experience?: number | null | undefined;
+  created_at: Date;
+  user_id: string;
+  question: {
+    id: string;
+    description: string;
+    experience?: number | null | undefined;
+    quiz_id: string;
+    answer: {
+      id: string;
+      option: string;
+      question_id: string;
+    }[];
+  }[];
+}
+
+interface Quiz {
+  id: string;
+  title: string;
+  difficulty: Difficulty;
+  description?: string | null;
+  experience?: number | null | undefined;
+  created_at: Date;
+  user_id: string;
+  question: {
+    id: string;
+    description: string;
+    experience?: number | null | undefined;
+    quiz_id: string;
+    answer: {
+      id: string;
+      option: string;
+      isCorrect: boolean;
+      question_id: string;
+    }[];
+  }[];
+}
+
+interface QuizList {
+  title: string;
+  difficulty: $Enums.Difficulty;
+  description: string | null;
+  experience: number | null;
+  user_id: string;
+  id: string;
+  created_at: Date;
+}
 
 export class QuizRepository {
   async create(quiz: QuizType): Promise<void> {
@@ -24,20 +77,12 @@ export class QuizRepository {
     });
   }
 
-  async findAll(): Promise<IOutput> {
-    const quizzes = await prismaClient.quiz.findMany();
-    return {
-      statusCode: 200,
-      body: {
-        success: true,
-        data: quizzes,
-        count: quizzes.length,
-      },
-    };
+  async findAll(): Promise<QuizList[]> {
+    return await prismaClient.quiz.findMany();
   }
 
-  async findById(id: string): Promise<IOutput> {
-    const quiz = await prismaClient.quiz.findUniqueOrThrow({
+  async findById(id: string): Promise<Quiz> {
+    return await prismaClient.quiz.findUniqueOrThrow({
       where: { id },
       include: {
         question: {
@@ -47,18 +92,10 @@ export class QuizRepository {
         },
       },
     });
-
-    return {
-      statusCode: 200,
-      body: {
-        success: true,
-        data: quiz,
-      },
-    };
   }
 
-  async findForActivity(id: string): Promise<IOutput> {
-    const quiz = await prismaClient.quiz.findUniqueOrThrow({
+  async findForActivity(id: string): Promise<QuizActivity> {
+    return await prismaClient.quiz.findUniqueOrThrow({
       where: {
         id,
       },
@@ -76,13 +113,6 @@ export class QuizRepository {
         },
       },
     });
-    return {
-      statusCode: 200,
-      body: {
-        success: true,
-        data: quiz,
-      },
-    };
   }
 
   async update(quiz: QuizEditType, id: string): Promise<void> {

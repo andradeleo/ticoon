@@ -12,6 +12,21 @@ import type { ValidationService } from "./ValidationService";
 import type { UserRepository } from "../repositories/UserRepository";
 import { NotFound } from "../errors/NotFound";
 
+interface IAnswer {
+  id: string;
+  option: string;
+  isCorrect: boolean;
+  question_id: string;
+}
+
+interface IQuestion {
+  id: string;
+  description: string;
+  experience?: number | null | undefined;
+  quiz_id: string;
+  answer: IAnswer[];
+}
+
 export class QuizService {
   constructor(
     private readonly quizRepository: QuizRepository,
@@ -48,18 +63,29 @@ export class QuizService {
   }
 
   async findAll(): Promise<IOutput> {
-    const { body } = await this.quizRepository.findAll();
+    const quizzes = await this.quizRepository.findAll();
     return {
       statusCode: 200,
-      body,
+      body: {
+        success: true,
+        data: quizzes,
+      },
     };
   }
 
   async findForActivity(id: string): Promise<IOutput> {
-    const { body } = await this.quizRepository.findForActivity(id);
+    const quiz = await this.quizRepository.findForActivity(id);
+
+    if (!quiz) {
+      throw new NotFound();
+    }
+
     return {
       statusCode: 200,
-      body,
+      body: {
+        success: true,
+        data: quiz,
+      },
     };
   }
 
@@ -90,31 +116,33 @@ export class QuizService {
 
   async submit(quiz: SubmittedQuizType, id: string): Promise<IOutput> {
     const { question } = submittedQuizSchema.parse(quiz);
-    const createdQuiz = await this.quizRepository.findById(id);
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    const x = createdQuiz.body.data as any;
-    const createdQuestions = x.question;
+    const currentQuiz = await this.quizRepository.findById(id);
+
+    if (!currentQuiz) {
+      throw new NotFound(404, "Quiz not found");
+    }
 
     const correctAnswers = this.validationService.validateQuestion(
       question,
-      createdQuestions,
+      currentQuiz.question,
     );
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    const questions = x.question.map((qst: any, index: number) => {
-      return {
-        ...qst,
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        answer: qst.answer.map((ans: any) => {
-          return {
-            ...ans,
-            answer_marked: correctAnswers.answers[index].user_answer === ans.id,
-          };
-        }),
-        isCorrect: correctAnswers.answers[index].isCorrect,
-      };
-    });
+    const questions = currentQuiz.question.map(
+      (questio: IQuestion, index: number) => {
+        return {
+          ...questio,
+          answer: questio.answer.map((answer: IAnswer) => {
+            return {
+              ...answer,
+              answer_marked:
+                correctAnswers.answers[index].user_answer === answer.id,
+            };
+          }),
+          isCorrect: correctAnswers.answers[index].isCorrect,
+        };
+      },
+    );
 
     const userExperienceGained =
       this.experienceService.sumExperienceFromCorrectAnswers(
@@ -133,7 +161,7 @@ export class QuizService {
     );
 
     const validatedQuiz = {
-      ...x,
+      ...currentQuiz,
       question: questions,
     };
 

@@ -5,7 +5,7 @@ interface IAnswerCheck {
   isCorrect: boolean;
 }
 
-interface IQuestionCheck {
+export interface IQuestionCheck {
   id: string;
   answer: IAnswerCheck[] | string;
   experience?: number | null | undefined;
