@@ -4,17 +4,19 @@ interface IAnswer {
 }
 
 interface IQuestion {
-  experience: number;
+  experience?: number | null | undefined;
 }
+
+type experienceType = number | null | undefined;
 
 export class ExperienceService {
   getTotalExperience(
     questions: IQuestion[],
-    experience: number | null,
-  ): number | null {
+    experience: experienceType,
+  ): experienceType {
     const experienceFromQuestions = questions.reduce(
-      (total: number, { experience }: { experience: number }) => {
-        const xp = experience ?? 0;
+      (total: number, question: IQuestion) => {
+        const xp = question.experience ?? 0;
         return total + xp;
       },
       0,
